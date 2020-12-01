@@ -31,7 +31,8 @@ const headHeight = 240; // menu顶部到网页顶部部分的高度
       list: state.inter.list,
       inter: state.inter.curdata,
       curProject: state.project.currProject,
-      expands: []
+      expands: [],
+      treeData: []
     };
   },
   {
@@ -279,9 +280,25 @@ class InterfaceMenu extends Component {
   };
 
   onFilter = e => {
+    const list = this.state.list;
+    const expands = [];
+    const loop = (arr) => {
+      arr.forEach((item) => {
+        if(item.name && item.name.indexOf(e.target.value) > -1) {
+          console.log('搜索结果', item._id);
+          expands.push('cat_' + item._id);
+        }
+        if(item.list && item.list.length > 0) {
+          loop(item.list);
+        }
+      });
+    };
+    if(e.target.value.length > 0) {
+      loop(list);
+    }
     this.setState({
       filter: e.target.value,
-      list: JSON.parse(JSON.stringify(this.props.list))
+      expands: expands
     });
   };
 
@@ -361,7 +378,100 @@ class InterfaceMenu extends Component {
 
     return { menuList, arr };
   };
+  // 返回树data
+  toTree = (list) => {
+    const treeData = [];
+    let tempList = list;
+    const roots = list.filter((item) => {
+      return !item.pid;
+    });
+    treeData.push(...roots);
+    const loop = (childList) => {
+      childList.forEach((item) => {
+        tempList.forEach((childItem, childIndex) => {
+          if(childItem.pid === item._id) {
+            item.list.push(childItem);
+            tempList.splice(childIndex,1);
+            if(item.list.length > 0) {
+              loop(item.list);
+            }
+          }
+        });
+      });
+    };
+    loop(treeData);
+    return treeData;
+  };
+  // 生成无级树
+  renderTree = (treeData) => treeData.map((item) => {
+    if(item.list) {
+      return(
+        <TreeNode
+          title={
+            <div
+                className="container-title"
+                onMouseEnter={() => this.enterItem(item._id)}
+                onMouseLeave={this.leaveItem}
+            >
+              <Icon type="folder-open" style={{ marginRight: 5 }} />
+              {item.name}
+              <div className="btns">
+                <Tooltip title="删除分类">
+                  <Icon
+                      type="delete"
+                      className="interface-delete-icon"
+                      onClick={e => {
+                        e.stopPropagation();
+                        this.showDelCatConfirm(item._id);
+                      }}
+                      style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                  />
+                </Tooltip>
+                <Tooltip title="修改分类">
+                  <Icon
+                      type="edit"
+                      className="interface-delete-icon"
+                      style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        this.changeModal('change_cat_modal_visible', true);
+                        this.setState({
+                          curCatdata: item
+                        });
+                      }}
+                  />
+                </Tooltip>
+                <Tooltip title="添加接口">
+                  <Icon
+                      type="plus"
+                      className="interface-delete-icon"
+                      style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                      onClick={e => {
+                        e.stopPropagation();
+                        this.changeModal('visible', true);
+                        this.setState({
+                          curCatid: item._id
+                        });
+                      }}
+                  />
+                </Tooltip>
+              </div>
 
+              {/*<Dropdown overlay={menu(item)} trigger={['click']} onClick={e => e.stopPropagation()}>
+              <Icon type='ellipsis' className="interface-delete-icon" />
+            </Dropdown>*/}
+            </div>
+          }
+          key={'cat_' + item._id}
+          className={`interface-item-nav ${item.list.length ? '' : 'cat_switch_hidden'}`}
+        >
+          {this.renderTree(item.list)}
+        </TreeNode>
+      )
+    } else {
+      return null
+    }
+  });
   render() {
     const matchParams = this.props.match.params;
     // let menuList = this.state.list;
@@ -513,19 +623,49 @@ class InterfaceMenu extends Component {
     };
 
     let currentKes = defaultExpandedKeys();
-    let menuList;
-    if (this.state.filter) {
-      let res = this.filterList(this.state.list);
-      menuList = res.menuList;
-      currentKes.expands = res.arr;
-    } else {
-      menuList = this.state.list;
-    }
-
+    let menuList = this.state.list;
+    const treeData = this.toTree(menuList);
     return (
       <div>
         {searchBox}
-        {menuList.length > 0 ? (
+        {treeData.length > 0 ? (
+          <div
+              className="tree-wrappper"
+              style={{ maxHeight: parseInt(document.body.clientHeight) - headHeight + 'px' }}
+          >
+            <Tree
+                className="interface-list"
+                defaultExpandedKeys={currentKes.expands}
+                defaultSelectedKeys={currentKes.selects}
+                expandedKeys={currentKes.expands}
+                selectedKeys={currentKes.selects}
+                onSelect={this.onSelect}
+                onExpand={this.onExpand}
+                draggable
+            >
+              <TreeNode
+                className="item-all-interface"
+                title={
+                  <Link
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.changeExpands();
+                    }}
+                    to={'/project/' + matchParams.id + '/interface/api'}
+                  >
+                    <Icon type="folder" style={{ marginRight: 5 }} />
+                    全部接口
+                  </Link>
+                }
+                key="root"
+              />
+              {
+                this.renderTree(treeData)
+              }
+            </Tree>
+          </div>
+        ) : null}
+        {menuList.length < 0 ? (
           <div
             className="tree-wrappper"
             style={{ maxHeight: parseInt(document.body.clientHeight) - headHeight + 'px' }}

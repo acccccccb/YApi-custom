@@ -1,7 +1,7 @@
 import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Input, Button, Select } from 'antd';
-const { Option } = Select;
+import {Form, Input, Button, TreeSelect} from 'antd';
+const { TreeNode } = TreeSelect;
 const FormItem = Form.Item;
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -22,9 +22,20 @@ class AddInterfaceForm extends Component {
       }
     });
   };
+  // 生成无级树
+  renderTree = (treeData) => treeData.map((item) => {
+    if(item.list) {
+      return(
+        <TreeNode value={ item._id.toString() } title={ item.name } key={item._id}>
+          {this.renderTree(item.list)}
+        </TreeNode>
+      )
+    } else {
+      return null
+    }
+  });
   render() {
     const { getFieldDecorator, getFieldsError } = this.props.form;
-    const category = this.props.category;
       const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -51,17 +62,11 @@ class AddInterfaceForm extends Component {
         </FormItem>
         <FormItem {...formItemLayout} label="上级分类">
           {getFieldDecorator('pid', {
-              initialValue: this.props.catdata ? this.props.catdata.pid || null : null
+              initialValue: this.props.catdata ? this.props.catdata.pid.toString() || null : null
           })(
-            <Select>
-              {
-                category.map((item) => {
-                  return(
-                    <Option value={item._id} key={item._id}>{ item.name }</Option>
-                  )
-                })
-              }
-            </Select>
+            <TreeSelect>
+              { this.renderTree(this.props.category) }
+            </TreeSelect>
           )}
         </FormItem>
         <FormItem {...formItemLayout} label="备注">
