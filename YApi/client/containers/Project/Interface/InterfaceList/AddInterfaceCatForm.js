@@ -12,7 +12,8 @@ class AddInterfaceForm extends Component {
     onSubmit: PropTypes.func,
     onCancel: PropTypes.func,
     catdata: PropTypes.object,
-    category: PropTypes.array
+    category: PropTypes.array,
+    defaultPid: PropTypes.string
   };
   handleSubmit = e => {
     e.preventDefault();
@@ -25,8 +26,9 @@ class AddInterfaceForm extends Component {
   // 生成无级树
   renderTree = (treeData) => treeData.map((item) => {
     if(item.list) {
+      const value = item._id ? item._id.toString() : item._id;
       return(
-        <TreeNode value={ item._id.toString() } title={ item.name } key={item._id}>
+        <TreeNode value={ value } title={ item.name } key={item._id}>
           {this.renderTree(item.list)}
         </TreeNode>
       )
@@ -62,7 +64,7 @@ class AddInterfaceForm extends Component {
         </FormItem>
         <FormItem {...formItemLayout} label="上级分类">
           {getFieldDecorator('pid', {
-              initialValue: this.props.catdata ? this.props.catdata.pid.toString() || null : null
+              initialValue: this.props.catdata ? this.props.catdata.pid || null : null
           })(
             <TreeSelect>
               { this.renderTree(this.props.category) }
