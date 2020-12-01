@@ -890,7 +890,8 @@ class interfaceController extends baseController {
       params = yapi.commons.handleParams(params, {
         name: 'string',
         project_id: 'number',
-        desc: 'string'
+        desc: 'string',
+        pid: 'number'
       });
 
       if (!params.project_id) {
@@ -911,6 +912,7 @@ class interfaceController extends baseController {
         name: params.name,
         project_id: params.project_id,
         desc: params.desc,
+        pid: params.pid,
         uid: this.getUid(),
         add_time: yapi.commons.time(),
         up_time: yapi.commons.time()
@@ -948,9 +950,10 @@ class interfaceController extends baseController {
       let result = await this.catModel.up(params.catid, {
         name: params.name,
         desc: params.desc,
+        pid: params.pid,
         up_time: yapi.commons.time()
       });
-
+      // 日志
       yapi.commons.saveLog({
         content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
           cate.project_id

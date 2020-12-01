@@ -185,6 +185,7 @@ class InterfaceMenu extends Component {
     let params = {
       catid: this.state.curCatdata._id,
       name: data.name,
+      pid: data.pid,
       desc: data.desc
     };
 
@@ -402,6 +403,7 @@ class InterfaceMenu extends Component {
             className="addcatmodal"
           >
             <AddInterfaceCatForm
+              category={this.state.list}
               onCancel={() => this.changeModal('add_cat_modal_visible', false)}
               onSubmit={this.handleAddInterfaceCat}
             />
@@ -419,6 +421,7 @@ class InterfaceMenu extends Component {
             className="addcatmodal"
           >
             <AddInterfaceCatForm
+              category={this.state.list}
               catdata={this.state.curCatdata}
               onCancel={() => this.changeModal('change_cat_modal_visible', false)}
               onSubmit={this.handleChangeInterfaceCat}

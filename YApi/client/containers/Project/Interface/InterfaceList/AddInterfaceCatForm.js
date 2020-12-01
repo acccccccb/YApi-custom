@@ -1,6 +1,7 @@
 import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Select } from 'antd';
+const { Option } = Select;
 const FormItem = Form.Item;
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -10,7 +11,8 @@ class AddInterfaceForm extends Component {
     form: PropTypes.object,
     onSubmit: PropTypes.func,
     onCancel: PropTypes.func,
-    catdata: PropTypes.object
+    catdata: PropTypes.object,
+    category: PropTypes.array
   };
   handleSubmit = e => {
     e.preventDefault();
@@ -20,10 +22,10 @@ class AddInterfaceForm extends Component {
       }
     });
   };
-
   render() {
     const { getFieldDecorator, getFieldsError } = this.props.form;
-    const formItemLayout = {
+    const category = this.props.category;
+      const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 }
@@ -46,6 +48,21 @@ class AddInterfaceForm extends Component {
             ],
             initialValue: this.props.catdata ? this.props.catdata.name || null : null
           })(<Input placeholder="分类名称" />)}
+        </FormItem>
+        <FormItem {...formItemLayout} label="上级分类">
+          {getFieldDecorator('pid', {
+              initialValue: this.props.catdata ? this.props.catdata.pid || null : null
+          })(
+            <Select>
+              {
+                category.map((item) => {
+                  return(
+                    <Option value={item._id} key={item._id}>{ item.name }</Option>
+                  )
+                })
+              }
+            </Select>
+          )}
         </FormItem>
         <FormItem {...formItemLayout} label="备注">
           {getFieldDecorator('desc', {
