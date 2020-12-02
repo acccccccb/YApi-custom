@@ -285,7 +285,6 @@ class InterfaceMenu extends Component {
     const loop = (arr) => {
       arr.forEach((item) => {
         if(item.name && item.name.indexOf(e.target.value) > -1) {
-          console.log('搜索结果', item._id);
           expands.push('cat_' + item._id);
         }
         if(item.list && item.list.length > 0) {
@@ -377,30 +376,6 @@ class InterfaceMenu extends Component {
     });
 
     return { menuList, arr };
-  };
-  // 返回树data
-  toTree = (list) => {
-    const treeData = [];
-    let tempList = list;
-    const roots = list.filter((item) => {
-      return !item.pid;
-    });
-    treeData.push(...roots);
-    const loop = (childList) => {
-      childList.forEach((item) => {
-        tempList.forEach((childItem, childIndex) => {
-          if(childItem.pid === item._id) {
-            item.list.push(childItem);
-            tempList.splice(childIndex,1);
-            if(item.list.length > 0) {
-              loop(item.list);
-            }
-          }
-        });
-      });
-    };
-    loop(treeData);
-    return treeData;
   };
   // 生成无级树
   renderTree = (treeData) => treeData.map((item) => {
@@ -596,12 +571,10 @@ class InterfaceMenu extends Component {
 
     let currentKes = defaultExpandedKeys();
     let menuList = this.state.list;
-    const treeData = this.toTree(menuList);
-    console.log('treeData', treeData);
     return (
       <div>
         {searchBox}
-        {treeData.length > 0 ? (
+        {menuList.length > 0 ? (
           <div
               className="tree-wrappper"
               style={{ maxHeight: parseInt(document.body.clientHeight) - headHeight + 'px' }}
@@ -633,7 +606,7 @@ class InterfaceMenu extends Component {
                 key="root"
               />
               {
-                this.renderTree(treeData)
+                this.renderTree(menuList)
               }
             </Tree>
           </div>

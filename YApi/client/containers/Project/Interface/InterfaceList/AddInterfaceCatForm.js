@@ -33,7 +33,7 @@ class AddInterfaceForm extends Component {
         </TreeNode>
       )
     } else {
-      return null
+      return (null)
     }
   });
   render() {

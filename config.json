@@ -4,7 +4,7 @@
   "timeout":120000,
   "db": {
     "servername": "127.0.0.1",
-    "DATABASE": "test",
+    "DATABASE": "api",
     "port": 27017,
     "user": "user1",
     "pass": "123456",

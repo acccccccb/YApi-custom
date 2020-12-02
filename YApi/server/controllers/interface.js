@@ -61,6 +61,29 @@ function handleHeaders(values){
   }
 }
 
+function toTree(list) {
+  const treeData = [];
+  let tempList = list;
+  const roots = list.filter((item) => {
+    return !item.pid;
+  });
+  treeData.push(...roots);
+  const loop = (childList) => {
+    childList.forEach((item) => {
+      tempList.forEach((childItem, childIndex) => {
+        if(childItem.pid === item._id) {
+          item.list.push(childItem);
+          tempList.splice(childIndex,1);
+          if(item.list.length > 0) {
+            loop(item.list);
+          }
+        }
+      });
+    });
+  };
+  loop(treeData);
+  return treeData;
+}
 
 class interfaceController extends baseController {
   constructor(ctx) {
@@ -592,7 +615,9 @@ class interfaceController extends baseController {
         item.list = list;
         newResult[i] = item;
       }
-      ctx.body = yapi.commons.resReturn(newResult);
+      const data = yapi.commons.resReturn(newResult);
+      data.data = toTree(data.data);
+      ctx.body = data;
     } catch (err) {
       ctx.body = yapi.commons.resReturn(null, 402, err.message);
     }
