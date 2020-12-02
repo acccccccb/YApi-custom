@@ -287,6 +287,9 @@ class InterfaceMenu extends Component {
         if(item.name && item.name.indexOf(e.target.value) > -1) {
           expands.push('cat_' + item._id);
         }
+        if(item.title && item.title.indexOf(e.target.value) > -1) {
+          expands.push('cat_' + item.catid);
+        }
         if(item.list && item.list.length > 0) {
           loop(item.list);
         }
@@ -295,10 +298,16 @@ class InterfaceMenu extends Component {
     if(e.target.value.length > 0) {
       loop(list);
     }
-    this.setState({
-      filter: e.target.value,
-      expands: expands
-    });
+    if(expands.length > 0) {
+      this.setState({
+        filter: e.target.value,
+        expands: expands
+      });
+    } else {
+      this.setState({
+        filter: e.target.value
+      });
+    }
   };
 
   onExpand = e => {
@@ -308,12 +317,43 @@ class InterfaceMenu extends Component {
   };
 
   onDrop = async e => {
+    console.log('onDrop', e);
+    // 当前操作ID
+    const actionId = e.dragNode.props.eventKey;
+    let pathArr = e.node.props.pos.split('-');
+    pathArr.splice(0, 1);
+    let putObj = this.state.list;
+    pathArr.forEach((item, index) => {
+      const i = parseInt(item);
+      if(index === 0) {
+        putObj = putObj[i - 1];
+      } else {
+        putObj = putObj.list[i];
+      }
+    });
+    if(actionId.indexOf('cat') === -1) {
+      console.log('操作接口放置到分类', parseInt(actionId), putObj);
+      let catid;
+      // 判断下拖动到了分类还是接口
+      if(putObj.list) {
+        catid = putObj._id;
+      } else {
+        catid = putObj.catid
+      }
+      await axios.post('/api/interface/up', {
+        id: parseInt(actionId),
+        catid: catid
+      });
+    } else {
+      console.log('操作分类');
+    }
     const dropCatIndex = e.node.props.pos.split('-')[1] - 1;
     const dragCatIndex = e.dragNode.props.pos.split('-')[1] - 1;
     if (dropCatIndex < 0 || dragCatIndex < 0) {
       return;
     }
     const { list } = this.props;
+    console.log('list', list);
     const dropCatId = this.props.list[dropCatIndex]._id;
     const id = e.dragNode.props.eventKey;
     const dragCatId = this.props.list[dragCatIndex]._id;
@@ -328,9 +368,10 @@ class InterfaceMenu extends Component {
         // 同一个分类下的接口交换顺序
         let colList = list[dropCatIndex].list;
         let changes = arrayChangeIndex(colList, dragIndex, dropIndex);
+        console.log('changes', changes);
         axios.post('/api/interface/up_index', changes).then();
       } else {
-        await axios.post('/api/interface/up', { id, catid: dropCatId });
+        // await axios.post('/api/interface/up', { id, catid: dropCatId });
       }
       const { projectId, router } = this.props;
       this.props.fetchInterfaceListMenu(projectId);
@@ -389,7 +430,7 @@ class InterfaceMenu extends Component {
                 onMouseLeave={this.leaveItem}
             >
               <Icon type="folder-open" style={{ marginRight: 5 }} />
-              {item.name}
+              {item._id}-{item.name}
               <div className="btns">
                 <Tooltip title="删除分类">
                   <Icon
@@ -450,10 +491,6 @@ class InterfaceMenu extends Component {
                   />
                 </Tooltip>
               </div>
-
-              {/*<Dropdown overlay={menu(item)} trigger={['click']} onClick={e => e.stopPropagation()}>
-              <Icon type='ellipsis' className="interface-delete-icon" />
-            </Dropdown>*/}
             </div>
           }
           key={'cat_' + item._id}
@@ -463,9 +500,54 @@ class InterfaceMenu extends Component {
         </TreeNode>
       )
     } else {
-      return (
-        <TreeNode title={item.name || item.title} key={'' + item._id}></TreeNode>
-      )
+      let str = item.name || item.title;
+      let keyword = this.state.filter;
+      let arr = [];
+      if(keyword && str.indexOf(keyword) > -1) {
+        arr = str.split(keyword);
+        return (
+          <TreeNode title={
+            <div
+              className="container-title"
+              onMouseEnter={() => this.enterItem(item._id)}
+              onMouseLeave={this.leaveItem}
+            >
+              <Icon type="link" style={{ marginRight: 5 }} />
+              {
+                arr.map((item, index) => {
+                  return (
+                    <span key={index}>
+                      {item._id}-
+                      <i style={{
+                        color: 'red',
+                        fontStyle: 'normal',
+                        display: index === 0 ? 'none' : 'inline-block'
+                      }}>{ keyword }</i>
+                      {item}
+                    </span>
+                  )
+                })
+              }
+            </div>
+          } key={'' + item._id}>
+          </TreeNode>
+        )
+      } else {
+        return (
+          <TreeNode title={
+            <div
+              className="container-title"
+              onMouseEnter={() => this.enterItem(item._id)}
+              onMouseLeave={this.leaveItem}
+            >
+              <Icon type="link" style={{ marginRight: 5 }} />
+              {item._id}-
+              { str }
+            </div>
+          } key={'' + item._id}/>
+        )
+      }
+
     }
   });
   render() {
@@ -587,6 +669,7 @@ class InterfaceMenu extends Component {
                 selectedKeys={currentKes.selects}
                 onSelect={this.onSelect}
                 onExpand={this.onExpand}
+                onDrop={this.onDrop}
                 draggable
             >
               <TreeNode

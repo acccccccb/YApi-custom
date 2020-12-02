@@ -211,7 +211,6 @@ class InterfaceList extends Component {
     })
   };
   render() {
-    console.log('this.props.catList', this.props.catList);
     let tag = this.props.curProject.tag;
     let tagFilter = tag.map(item => {
       return {text: item.name, value: item.name};
