@@ -4,6 +4,7 @@
 /node_modules
 /YApi/node_modules
 node_modules
+/config.json
 /.pnp
 .pnp.js
 
