@@ -981,6 +981,20 @@ class interfaceController extends baseController {
         up_time: yapi.commons.time()
       });
       // 日志
+      let newCate = await this.catModel.get(params.catid);
+
+      let logData = {
+        catId: params.id,
+        pid: params.id,
+        current: newCate.toObject(),
+        old: cate.toObject()
+      };
+
+      let diffView2 = showDiffMsg(jsondiffpatch, formattersHtml, logData);
+      if (diffView2.length <= 0) {
+        return; // 没有变化时，不写日志
+      }
+
       yapi.commons.saveLog({
         content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
           cate.project_id
@@ -988,7 +1002,8 @@ class interfaceController extends baseController {
         type: 'project',
         uid: this.getUid(),
         username: username,
-        typeid: cate.project_id
+        typeid: cate.project_id,
+        data: logData
       });
 
       ctx.body = yapi.commons.resReturn(result);
