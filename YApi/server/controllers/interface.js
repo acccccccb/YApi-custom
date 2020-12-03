@@ -72,10 +72,12 @@ function toTree(list) {
     childList.forEach((item) => {
       tempList.forEach((childItem, childIndex) => {
         if(childItem.pid === item._id) {
-          item.list.push(childItem);
-          tempList.splice(childIndex,1);
-          if(item.list.length > 0) {
-            loop(item.list);
+          if(item.list) {
+            item.list.push(childItem);
+            tempList.splice(childIndex,1);
+            if(item.list.length > 0) {
+              loop(item.list);
+            }
           }
         }
       });
