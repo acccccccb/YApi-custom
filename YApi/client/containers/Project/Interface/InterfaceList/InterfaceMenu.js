@@ -326,7 +326,6 @@ class InterfaceMenu extends Component {
     posPath.splice(0, 1);
     posPath.forEach((item, index) => {
       const i = parseInt(item);
-      console.log(i);
       if(index === 0) {
         list = list[i - 1];
       } else {
@@ -386,7 +385,6 @@ class InterfaceMenu extends Component {
         let changes = arrayChangeIndex(colList, dropIndex, dragIndex);
         axios.post('/api/interface/up_index', changes).then();
       } else {
-        console.log('移动到分组', catid);
         await axios.post('/api/interface/up', {
           id: actionId,
           catid
@@ -401,8 +399,6 @@ class InterfaceMenu extends Component {
       }
     } else {
       // 分类之间拖动
-      console.log('putObj', putObj);
-      console.log('当前拖动的对象', dragObj);
       // 判断下拖动到了分类还是接口
       if(putObj && !putObj.list) {
         return;
@@ -424,7 +420,6 @@ class InterfaceMenu extends Component {
   };
   // 上移-下移
   upAndDown = (list, item, index, action) => {
-    console.log(list);
     let dropIndex;
     if(action === 'up') {
       dropIndex = index -1;
