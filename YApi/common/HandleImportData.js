@@ -34,7 +34,7 @@ async function handle(
         } else {
           let apipath = '/api/interface/add_cat';
           if (isNode) {
-            apipath = 'http://192.168.0.113:' + port + apipath;
+            apipath = 'http://127.0.0.1:' + port + apipath;
           }
 
           let data = {
@@ -77,7 +77,7 @@ async function handle(
     if(info.basePath){
       let projectApiPath = '/api/project/up';
       if (isNode) {
-        projectApiPath = 'http://192.168.0.113:' + port + projectApiPath;
+        projectApiPath = 'http://127.0.0.1:' + port + projectApiPath;
       }
 
       await axios.post(projectApiPath, {
@@ -112,7 +112,7 @@ async function handle(
         count++;
         let apipath = '/api/interface/save';
         if (isNode) {
-          apipath = 'http://192.168.0.113:' + port + apipath;
+          apipath = 'http://127.0.0.1:' + port + apipath;
         }
         data.dataSync = dataSync;
         let result = await axios.post(apipath, data);
@@ -128,7 +128,7 @@ async function handle(
         count++;
         let apipath = '/api/interface/add';
         if (isNode) {
-          apipath = 'http://192.168.0.113:' + port + apipath;
+          apipath = 'http://127.0.0.1:' + port + apipath;
         }
         let result = await axios.post(apipath, data);
         if (result.data.errcode) {
