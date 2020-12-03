@@ -431,9 +431,13 @@ class InterfaceMenu extends Component {
     } else {
       dropIndex = index + 1;
     }
-    let changes = arrayChangeIndex(list, index, dropIndex);
-    axios.post('/api/interface/up_cat_index', changes).then();
-    this.props.fetchInterfaceListMenu(this.props.projectId);
+    if(list[dropIndex] && list[dropIndex].list) {
+      let changes = arrayChangeIndex(list, index, dropIndex);
+      axios.post('/api/interface/up_cat_index', changes).then();
+      this.props.fetchInterfaceListMenu(this.props.projectId);
+    } else {
+      return message.warning('分类无法和接口调换位置');
+    }
   };
   // 数据过滤
   filterList = list => {
