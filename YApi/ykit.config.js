@@ -34,7 +34,12 @@ function createScript(plugin, pathAlias) {
 }
 
 function initPlugins(configPlugin) {
-  configPlugin = require('../config.json').plugins;
+  if(process.env.NODE_ENV === 'production') {
+    configPlugin = require('./config.json').plugins;
+  } else {
+    configPlugin = require('./config_dev.json').plugins;
+  }
+
   var systemConfigPlugin = require('./common/config.js').exts;
 
   var scripts = [];

@@ -266,6 +266,7 @@ class InterfaceList extends Component {
         render: (item, record) => {
           return (
             <TreeSelect
+              treeDefaultExpandAll
               value={item + ''}
               className="select path"
               onChange={catid => this.changeInterfaceCat(record._id, catid)}

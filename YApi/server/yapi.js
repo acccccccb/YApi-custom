@@ -1,8 +1,12 @@
 const path = require('path');
 const fs = require('fs-extra');
 const nodemailer = require('nodemailer');
-const config = require('../../config.json');
-
+let config;
+if(process.env.NODE_ENV === 'production') {
+  config = require('../config.json');
+} else {
+  config = require('../config_dev.json');
+}
 let insts = new Map();
 let mail;
 

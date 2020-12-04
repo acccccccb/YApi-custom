@@ -3,8 +3,10 @@
 # dependencies
 /node_modules
 /YApi/node_modules
+/log
 node_modules
 config.json
+init.lock
 /.pnp
 .pnp.js
 

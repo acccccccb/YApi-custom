@@ -1,5 +1,11 @@
 const projectModel = require('../models/project.js');
 const yapi = require('../yapi.js');
+let config;
+if(process.env.NODE_ENV === 'production') {
+  config = require('../../config.json');
+} else {
+  config = require('../../config_dev.json');
+}
 const _ = require('underscore');
 const baseController = require('./base.js');
 const interfaceModel = require('../models/interface.js');
@@ -219,7 +225,7 @@ class projectController extends baseController {
       add_time: yapi.commons.time(),
       up_time: yapi.commons.time(),
       is_json5: false,
-      env: [{ name: 'local', domain: 'http://192.168.0.113' }]
+      env: [{ name: 'local', domain: config.baseUrl }]
     };
 
     let result = await this.Model.save(data);
@@ -295,7 +301,7 @@ class projectController extends baseController {
         uid: this.getUid(),
         add_time: yapi.commons.time(),
         up_time: yapi.commons.time(),
-        env: params.env || [{ name: 'local', domain: 'http://192.168.0.113' }]
+        env: params.env || [{ name: 'local', domain: config.baseUrl }]
       });
 
       delete data._id;
@@ -534,7 +540,7 @@ class projectController extends baseController {
     let cat = await catInst.list(params.id);
     result.cat = cat;
     if (result.env.length === 0) {
-      result.env.push({ name: 'local', domain: 'http://192.168.0.113' });
+      result.env.push({ name: 'local', domain: config.baseUrl });
     }
     result.role = await this.getProjectRole(params.id, 'project');
 

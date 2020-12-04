@@ -1,6 +1,11 @@
 process.env.NODE_PATH = __dirname;
-require('module').Module._initPaths();
-
+require('module').Module._initPaths()
+let config
+if(process.env.NODE_ENV === 'production') {
+  config = require('../config.json');
+} else {
+  config = require('../config_dev.json');
+}
 const yapi = require('./yapi.js');
 const commons = require('./utils/commons');
 yapi.commons = commons;
@@ -63,7 +68,7 @@ const server = app.listen(yapi.WEBCONFIG.port);
 server.setTimeout(yapi.WEBCONFIG.timeout);
 
 commons.log(
-  `服务已启动，请打开下面链接访问: \nhttp://192.168.0.113${
+  `服务已启动，请打开下面链接访问: \n${config.baseUrl}${
     yapi.WEBCONFIG.port == '80' ? '' : ':' + yapi.WEBCONFIG.port
   }/`
 );

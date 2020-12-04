@@ -159,7 +159,7 @@ test('isDeepMatch', t=>{
 test('isDeepMatch', t=>{
   t.true(lib.isDeepMatch({ t: 1,
     b: '2',
-    ip: '192.168.0.113',
+    ip: '127.0.0.1',
     interface_id: 1857,
     ip_enable: true,
     params: { a: 'x', b: 'y' },
