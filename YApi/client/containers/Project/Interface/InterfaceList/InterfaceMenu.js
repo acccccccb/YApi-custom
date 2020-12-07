@@ -476,7 +476,7 @@ class InterfaceMenu extends Component {
                 onMouseLeave={this.leaveItem}
             >
               <Icon type="folder-open" style={{ marginRight: 5 }} />
-              {item._id}-{item.name}
+              {item.name}
               <div className="btns">
                 <Tooltip title="删除分类">
                   <Icon
@@ -582,7 +582,6 @@ class InterfaceMenu extends Component {
                 arr.map((item, index) => {
                   return (
                     <span key={index}>
-                      {item._id}-
                       <i style={{
                         color: 'red',
                         fontStyle: 'normal',
@@ -593,6 +592,30 @@ class InterfaceMenu extends Component {
                   )
                 })
               }
+              <div className="btns">
+                <Tooltip title="删除接口">
+                  <Icon
+                    type="delete"
+                    className="interface-delete-icon"
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.showConfirm(item);
+                    }}
+                    style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                  />
+                </Tooltip>
+                <Tooltip title="复制接口">
+                  <Icon
+                    type="copy"
+                    className="interface-delete-icon"
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.copyInterface(item._id);
+                    }}
+                    style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                  />
+                </Tooltip>
+              </div>
             </div>
           } key={'' + item._id}>
           </TreeNode>
@@ -605,8 +628,31 @@ class InterfaceMenu extends Component {
               onMouseEnter={() => this.enterItem(item._id)}
               onMouseLeave={this.leaveItem}
             >
-              {item._id}-
               { str }
+              <div className="btns">
+                <Tooltip title="删除接口">
+                  <Icon
+                    type="delete"
+                    className="interface-delete-icon"
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.showConfirm(item);
+                    }}
+                    style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                  />
+                </Tooltip>
+                <Tooltip title="复制接口">
+                  <Icon
+                    type="copy"
+                    className="interface-delete-icon"
+                    onClick={e => {
+                      e.stopPropagation();
+                      this.copyInterface(item._id);
+                    }}
+                    style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
+                  />
+                </Tooltip>
+              </div>
             </div>
           } key={'' + item._id}/>
         )
