@@ -148,6 +148,8 @@ class ProjectData extends Component {
       reader.readAsText(info.file);
       reader.onload = async res => {
         res = await importDataModule[this.state.curImportType].run(res.target.result);
+        console.log('#############');
+        console.log(res);
         if (this.state.dataSync === 'merge') {
           // 开启同步
           this.showConfirm(res);
@@ -485,7 +487,7 @@ class ProjectData extends Component {
                 {this.state.curExportType ? (
                   <div>
                     <p className="export-desc">{exportDataModule[this.state.curExportType].desc}</p>
-                    <a 
+                    <a
                       target="_blank"
                       rel="noopener noreferrer"
                       href={exportHref}>

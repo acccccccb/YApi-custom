@@ -207,7 +207,8 @@ class InterfaceEditForm extends Component {
         req_radio_type: 'req-query',
         custom_field_value: '',
         api_opened: false,
-        visible: false
+        visible: false,
+        category: []
       },
       curdata
     );
@@ -370,7 +371,6 @@ class InterfaceEditForm extends Component {
       this._changeRadioGroup(radio[0], radio[1]);
     });
   };
-
   componentDidMount() {
     EditFormContext = this;
     this._isMounted = true;
@@ -389,6 +389,10 @@ class InterfaceEditForm extends Component {
       initialEditType: 'wysiwyg',
       height: '500px',
       initialValue: this.state.markdown || this.state.desc
+    });
+    const category = localStorage.getItem('menuList');
+    this.setState({
+      category: JSON.parse(category)
     });
   }
 
@@ -601,19 +605,20 @@ class InterfaceEditForm extends Component {
     const treeData = [];
     let tempList = list;
     const roots = list.filter((item) => {
-      return !item.pid;
+      return item.pid === '';
     });
     treeData.push(...roots);
     const loop = (childList) => {
       childList.forEach((item) => {
-        tempList.forEach((childItem, childIndex) => {
-          if(childItem.pid === item._id) {
-            if(!item.list) {
-              item.list = [];
-            }
-            item.list.push(childItem);
-            tempList.splice(childIndex,1);
-            if(item.list.length > 0) {
+        tempList.forEach((childItem) => {
+          if(parseInt(childItem.pid) === item._id) {
+            if(item.list) {
+              const filter = item.list.filter((filterItem) => {
+                return filterItem.cid == childItem.cid;
+              });
+              if(filter.length === 0) {
+                item.list.push(childItem);
+              }
               loop(item.list);
             }
           }
@@ -628,15 +633,20 @@ class InterfaceEditForm extends Component {
     return treeData.map((item) => {
       const value = item._id ? item._id.toString() : null;
       if(item.list) {
+        let isLeaf = true;
+        const filter = item.list.filter((filterItem) => {
+          return typeof filterItem.list;
+        });
+        if(filter.length > 0) {
+          isLeaf = false;
+        }
         return(
-          <TreeNode value={ value } title={ item.name } key={item._id}>
+          <TreeNode value={ value } title={ item.name } key={item._id} isLeaf={isLeaf}>
             {this.renderTree(item.list)}
           </TreeNode>
         )
       } else {
-        return (
-          <TreeNode value={ value } title={ item.name } key={item._id}></TreeNode>
-        )
+        return (null)
       }
     })
   };
@@ -883,7 +893,7 @@ class InterfaceEditForm extends Component {
               })(
                 <TreeSelect>
                   {
-                    this.renderTree(this.toTree(this.props.cat))
+                    this.renderTree(this.toTree(this.state.category))
                   }
                 </TreeSelect>
               )}

@@ -404,6 +404,7 @@ class InterfaceList extends Component {
             className="addcatmodal"
           >
             <AddInterfaceForm
+              category={JSON.parse(localStorage.getItem('menuList'))}
               catid={this.state.catid}
               catdata={cat}
               onCancel={() => this.setState({ visible: false })}

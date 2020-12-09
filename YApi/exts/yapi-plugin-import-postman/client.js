@@ -96,8 +96,10 @@ function postman(importDataModule) {
       if (res.folders && Array.isArray(res.folders)) {
         res.folders.forEach(tag => {
           interfaceData.cats.push({
+            id: tag.id,
             name: tag.name,
-            desc: tag.description
+            desc: tag.description,
+            pid: tag.folder
           });
         });
       }
@@ -126,6 +128,7 @@ function postman(importDataModule) {
       path: 'url',
       method: 'method',
       desc: 'description',
+      pid: 'folder',
       req_query: 'queryParams',
       req_headers: 'headerData',
       req_params: '',

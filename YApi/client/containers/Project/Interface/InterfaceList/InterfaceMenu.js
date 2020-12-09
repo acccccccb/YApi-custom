@@ -164,8 +164,23 @@ class InterfaceMenu extends Component {
       }
     });
   };
-
+  generateUUID = () => {
+    let d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === "function") {
+      d += performance.now(); //use high-precision timer if available
+    }
+    let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      let r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    return uuid;
+  };
   handleAddInterfaceCat = data => {
+    if(!data.pid) {
+      data.pid = '';
+    }
+    data.cid = this.generateUUID();
     data.project_id = this.props.projectId;
     axios.post('/api/interface/add_cat', data).then(res => {
       if (res.data.errcode !== 0) {
@@ -186,10 +201,9 @@ class InterfaceMenu extends Component {
     let params = {
       catid: this.state.curCatdata._id,
       name: data.name,
-      pid: data.pid,
+      pid: data.pid ? data.pid.toString() : '',
       desc: data.desc
     };
-
     axios.post('/api/interface/up_cat', params).then(res => {
       if (res.data.errcode !== 0) {
         return message.error(res.data.errmsg);
@@ -412,7 +426,7 @@ class InterfaceMenu extends Component {
         catid: dragObj._id,
         desc: dragObj.desc,
         name: dragObj.name,
-        pid: putObj ? putObj._id : null
+        pid: putObj ? putObj.cid : ''
       };
       axios.post('/api/interface/up_cat', params).then(res => {
         if (res.data.errcode !== 0) {
@@ -501,7 +515,7 @@ class InterfaceMenu extends Component {
                       style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
                       onClick={e => {
                         e.stopPropagation();
-                        item.pid = item.pid ? item.pid.toString() : null;
+                        item.pid = item.pid ? item.pid.toString() : '';
                         this.changeModal('change_cat_modal_visible', true);
                         this.setState({
                           curCatdata: item
@@ -530,7 +544,7 @@ class InterfaceMenu extends Component {
                     style={{ display: this.state.delIcon == item._id ? 'block' : 'none' }}
                     onClick={e => {
                       e.stopPropagation();
-                      const pid = item._id ? item._id.toString() : null;
+                      const pid = item.cid || '';
                       const curCatdata = {
                         pid
                       };
@@ -683,10 +697,11 @@ class InterfaceMenu extends Component {
             title="添加接口"
             visible={this.state.visible}
             onCancel={() => this.changeModal('visible', false)}
-            footer={null}
+            footer={''}
             className="addcatmodal"
           >
             <AddInterfaceForm
+              category={this.state.list}
               catdata={this.props.curProject.cat}
               catid={this.state.curCatid}
               onCancel={() => this.changeModal('visible', false)}
@@ -702,7 +717,7 @@ class InterfaceMenu extends Component {
             title="添加分类"
             visible={this.state.add_cat_modal_visible}
             onCancel={() => this.changeModal('add_cat_modal_visible', false)}
-            footer={null}
+            footer={''}
             className="addcatmodal"
           >
             <AddInterfaceCatForm
@@ -721,7 +736,7 @@ class InterfaceMenu extends Component {
             title="修改分类"
             visible={this.state.change_cat_modal_visible}
             onCancel={() => this.changeModal('change_cat_modal_visible', false)}
-            footer={null}
+            footer={''}
             className="addcatmodal"
           >
             <AddInterfaceCatForm
@@ -768,6 +783,7 @@ class InterfaceMenu extends Component {
 
     let currentKes = defaultExpandedKeys();
     let menuList = this.state.list;
+    localStorage.setItem('menuList', JSON.stringify(menuList));
     return (
       <div>
         {searchBox}

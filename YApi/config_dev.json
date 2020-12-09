@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://192.168.0.113",
+  "baseUrl": "http://192.168.0.125",
   "port": "3000",
   "adminAccount": "admin@admin.com",
   "timeout":120000,

@@ -70,14 +70,16 @@ function toTree(list) {
   treeData.push(...roots);
   const loop = (childList) => {
     childList.forEach((item) => {
-      tempList.forEach((childItem, childIndex) => {
-        if(childItem.pid === item._id) {
+      tempList.forEach((childItem) => {
+        if(childItem.pid === item.cid) {
           if(item.list) {
-            item.list.push(childItem);
-            tempList.splice(childIndex,1);
-            if(item.list.length > 0) {
-              loop(item.list);
+            const filter = item.list.filter((filterItem) => {
+              return filterItem.cid == childItem.cid;
+            });
+            if(filter.length === 0) {
+              item.list.push(childItem);
             }
+            loop(item.list);
           }
         }
       });
@@ -918,7 +920,8 @@ class interfaceController extends baseController {
         name: 'string',
         project_id: 'number',
         desc: 'string',
-        pid: 'number'
+        cid: 'string',
+        pid: 'string'
       });
 
       if (!params.project_id) {
@@ -939,6 +942,7 @@ class interfaceController extends baseController {
         name: params.name,
         project_id: params.project_id,
         desc: params.desc,
+        cid: params.cid,
         pid: params.pid,
         uid: this.getUid(),
         add_time: yapi.commons.time(),
@@ -991,21 +995,18 @@ class interfaceController extends baseController {
       };
 
       let diffView2 = showDiffMsg(jsondiffpatch, formattersHtml, logData);
-      if (diffView2.length <= 0) {
-        return; // 没有变化时，不写日志
+      if (diffView2.length > 0) {
+        yapi.commons.saveLog({
+          content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
+            cate.project_id
+            }/interface/api/cat_${params.catid}">${cate.name}</a>`,
+          type: 'project',
+          uid: this.getUid(),
+          username: username,
+          typeid: cate.project_id,
+          data: logData
+        });
       }
-
-      yapi.commons.saveLog({
-        content: `<a href="/user/profile/${this.getUid()}">${username}</a> 更新了分类 <a href="/project/${
-          cate.project_id
-        }/interface/api/cat_${params.catid}">${cate.name}</a>`,
-        type: 'project',
-        uid: this.getUid(),
-        username: username,
-        typeid: cate.project_id,
-        data: logData
-      });
-
       ctx.body = yapi.commons.resReturn(result);
     } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 400, e.message);

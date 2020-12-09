@@ -20,7 +20,7 @@ async function handle(
 
   const taskNotice = _.throttle((index, len)=>{
     messageSuccess(`正在导入，已执行任务 ${index+1} 个，共 ${len} 个`)
-  }, 3000)
+  }, 3000);
 
   const handleAddCat = async cats => {
     let catsObj = {};
@@ -36,10 +36,11 @@ async function handle(
           if (isNode) {
             apipath = 'http://127.0.0.1:' + port + apipath;
           }
-
           let data = {
             name: cat.name,
             project_id: projectId,
+            pid: cat.pid || '',
+            cid: cat.id || '',
             desc: cat.desc,
             token
           };

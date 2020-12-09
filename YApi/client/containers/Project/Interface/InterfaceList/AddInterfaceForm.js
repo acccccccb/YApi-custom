@@ -20,7 +20,8 @@ class AddInterfaceForm extends Component {
     onSubmit: PropTypes.func,
     onCancel: PropTypes.func,
     catid: PropTypes.number,
-    catdata: PropTypes.array
+    catdata: PropTypes.array,
+    category: PropTypes.array
   }
   handleSubmit = (e) => {
     e.preventDefault();
@@ -39,24 +40,25 @@ class AddInterfaceForm extends Component {
     this.props.form.setFieldsValue({
       path: handleApiPath(val)
     })
-  }
+  };
   toTree = (list) => {
     const treeData = [];
     let tempList = list;
     const roots = list.filter((item) => {
-      return !item.pid;
+      return item.pid === '';
     });
     treeData.push(...roots);
     const loop = (childList) => {
       childList.forEach((item) => {
-        tempList.forEach((childItem, childIndex) => {
-          if(childItem.pid === item._id) {
-            if(!item.list) {
-              item.list = [];
-            }
-            item.list.push(childItem);
-            tempList.splice(childIndex,1);
-            if(item.list.length > 0) {
+        tempList.forEach((childItem) => {
+          if(parseInt(childItem.pid) === item._id) {
+            if(item.list) {
+              const filter = item.list.filter((filterItem) => {
+                return filterItem.cid == childItem.cid;
+              });
+              if(filter.length === 0) {
+                item.list.push(childItem);
+              }
               loop(item.list);
             }
           }
@@ -69,7 +71,7 @@ class AddInterfaceForm extends Component {
   // 生成无级树
   renderTree = (treeData) => {
     return treeData.map((item) => {
-      const value = item._id ? item._id.toString() : null;
+      const value = item._id ? item._id.toString() : '';
       if(item.list) {
         return(
           <TreeNode value={ value } title={ item.name } key={item._id}>
@@ -77,9 +79,7 @@ class AddInterfaceForm extends Component {
           </TreeNode>
         )
       } else {
-        return (
-          <TreeNode value={ value } title={ item.name } key={item._id}></TreeNode>
-        )
+        return (null)
       }
     })
   };
@@ -104,21 +104,21 @@ class AddInterfaceForm extends Component {
         sm: { span: 14 }
       }
     };
-
+    console.log('this.props.category', this.props.category);
 
     return (
 
       <Form onSubmit={this.handleSubmit}>
         <FormItem
           {...formItemLayout}
-          label="接口分类"
+          label="接口分类1"
         >
           {getFieldDecorator('catid', {
             initialValue: this.props.catid ? this.props.catid + '' : this.props.catdata[0]._id + ''
           })(
             <TreeSelect>
               {
-                this.renderTree(this.toTree(this.props.catdata))
+                this.renderTree(this.toTree(this.props.category))
               }
             </TreeSelect>
             )}
