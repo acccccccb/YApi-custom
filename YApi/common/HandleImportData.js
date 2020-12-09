@@ -30,6 +30,7 @@ async function handle(
         let findCat = _.find(menuList, menu => menu.name === cat.name);
         catsObj[cat.name] = cat;
         if (findCat) {
+          cat.cid = cat.id || '';
           cat.id = findCat._id;
         } else {
           let apipath = '/api/interface/add_cat';
@@ -63,7 +64,7 @@ async function handle(
     if (cats === false) {
       return;
     }
-
+    console.log('cats', cats);
     const res = info.apis;
     let len = res.length;
     let count = 0;
