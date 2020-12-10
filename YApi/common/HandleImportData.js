@@ -28,9 +28,9 @@ async function handle(
       for (let i = 0; i < cats.length; i++) {
         let cat = cats[i];
         let findCat = _.find(menuList, menu => menu.name === cat.name);
+        cat.cid = cat.id || '';
         catsObj[cat.name] = cat;
         if (findCat) {
-          cat.cid = cat.id || '';
           cat.id = findCat._id;
         } else {
           let apipath = '/api/interface/add_cat';
@@ -64,7 +64,6 @@ async function handle(
     if (cats === false) {
       return;
     }
-    console.log('cats', cats);
     const res = info.apis;
     let len = res.length;
     let count = 0;
@@ -88,12 +87,18 @@ async function handle(
         token
       })
     }
-
-    for (let index = 0; index < res.length; index++) {
-      let item = res[index];
+    res.forEach(async (item, index) => {
+      // TODO 导入接口
+      let parentId = null;
+      const catKeys = Object.keys(cats);
+      catKeys.forEach((catKey) => {
+        if(cats[catKey].cid === item.pid) {
+          parentId = cats[catKey].id;
+        }
+      });
       let data = Object.assign(item, {
         project_id: projectId,
-        catid: selectCatid
+        catid: parentId || selectCatid
       });
       if (basePath) {
         data.path =
@@ -141,7 +146,7 @@ async function handle(
           if (result.data.errcode == 40033) {
             callback({ showLoading: false });
             messageError('没有权限');
-            break;
+            return;
           }
         }
       }
@@ -152,7 +157,7 @@ async function handle(
       }
 
       taskNotice(index, res.length)
-    }
+    });
   };
 
   return await handleAddInterface(res);

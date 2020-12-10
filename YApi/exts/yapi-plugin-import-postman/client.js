@@ -107,14 +107,13 @@ function postman(importDataModule) {
       if (_.find(res.folders, item => item.collectionId === res.id)) {
         folders = res.folders;
       }
-
       if (interData && interData.length) {
         for (let item in interData) {
           let data = importPostman.bind(this)(interData[item]);
+          data.pid = interData[item].folder;
           interfaceData.apis.push(data);
         }
       }
-
       return interfaceData;
     } catch (e) {
       message.error('文件格式必须为JSON');
