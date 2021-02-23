@@ -24,6 +24,13 @@ npm run dev
 npm run build-client
 npm run start
 ```
+
+#### 守护进程：
+```bash
+npm i pm2 -g
+pm2 start "npm run start"
+```
+
 #### 注意：
 
 > 配置文件config.json位置被移动到了根目录下
