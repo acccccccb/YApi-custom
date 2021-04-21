@@ -12,25 +12,25 @@
 #### 开始：
 > 进入YApi目录
 ```bash
-npm run i
+npm i
 ```
-
+#### 初始化数据库(开发)
+```base
+npm run install-server
+```
 #### 开发：
 ```bash
 npm run dev
+```
+#### 初始化数据库(生产)
+```base
+npm run install-server
 ```
 #### 部署：
 ```bash
 npm run build-client
 npm run start
 ```
-
-#### 守护进程：
-```bash
-npm i pm2 -g
-pm2 start "npm run start"
-```
-
 #### 注意：
 
 > 配置文件config.json位置被移动到了根目录下
