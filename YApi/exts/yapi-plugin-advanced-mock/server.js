@@ -168,19 +168,21 @@ module.exports = function() {
       projectData: project,
       interfaceData: interfaceData,
       ctx: ctx,
-      mockJson: res 
-    } 
+      mockJson: res
+    }
    */
   this.bindHook('mock_after', async function(context) {
     let interfaceId = context.interfaceData._id;
     let caseData = await checkCase(context.ctx, interfaceId);
 
     // 只有开启高级mock才可用
+    if(!yapi.WEBCONFIG.mock) {
+      return false;
+    }
     if (caseData && caseData.case_enable) {
       // 匹配到高级mock
       let data = await handleByCase(caseData);
-
-      context.mockJson = yapi.commons.json_parse(data.res_body);
+        context.mockJson = yapi.commons.json_parse(data.res_body);
       try {
         context.mockJson = Mock.mock(
           mockExtra(context.mockJson, {
@@ -200,13 +202,13 @@ module.exports = function() {
     }
     let inst = yapi.getInst(advModel);
     let data = await inst.get(interfaceId);
-
     if (!data || !data.enable || !data.mock_script) {
       return context;
     }
-
     // mock 脚本
     let script = data.mock_script;
-    yapi.commons.handleMockScript(script, context);
+    // 过滤非法脚本
+    //   console.log(script);
+      yapi.commons.handleMockScript(script, context);
   });
 };

@@ -616,7 +616,7 @@ exports.getUserdata = async function getUserdata(uid, role) {
 
 // 处理mockJs脚本
 exports.handleMockScript = function (script, context) {
-  let sandbox = {
+    let sandbox = {
     header: context.ctx.header,
     query: context.ctx.query,
     body: context.ctx.request.body,
@@ -634,10 +634,14 @@ exports.handleMockScript = function (script, context) {
       var parts = Cookie.split('=');
       sandbox.cookie[parts[0].trim()] = (parts[1] || '').trim();
     });
-  sandbox = yapi.commons.sandbox(sandbox, script);
-  sandbox.delay = isNaN(sandbox.delay) ? 0 : +sandbox.delay;
-
-  context.mockJson = sandbox.mockJson;
+    const filter = 'process|exec|require';
+    const reg = new RegExp("["+filter+"]", "g");
+    if(reg.test(script)) {
+        return false;
+    }
+    sandbox = yapi.commons.sandbox(sandbox, script);
+    sandbox.delay = isNaN(sandbox.delay) ? 0 : +sandbox.delay;
+    context.mockJson = sandbox.mockJson;
   context.resHeader = sandbox.resHeader;
   context.httpCode = sandbox.httpCode;
   context.delay = sandbox.delay;
