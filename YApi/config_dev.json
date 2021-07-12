@@ -5,6 +5,7 @@
   "timeout":120000,
   "closeRegister": true,
   "mock": false,
+  "filter": "process|exec|require|spawn",
   "db": {
     "servername": "127.0.0.1",
     "DATABASE": "api",

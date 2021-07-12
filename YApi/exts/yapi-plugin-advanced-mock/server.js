@@ -205,10 +205,9 @@ module.exports = function() {
     if (!data || !data.enable || !data.mock_script) {
       return context;
     }
-    // mock 脚本
-    let script = data.mock_script;
-    // 过滤非法脚本
-    //   console.log(script);
+      // mock 脚本
+      let script = data.mock_script;
       yapi.commons.handleMockScript(script, context);
+      await yapi.commons.handleMockScript(script, context);
   });
 };
