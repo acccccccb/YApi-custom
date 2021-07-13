@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Table, Popconfirm, message, Input } from 'antd';
 import axios from 'axios';
+import AddUser from './AddUser'
 
 const Search = Input.Search;
 const limit = 20;
@@ -63,7 +64,6 @@ class List extends Component {
       }
     });
   }
-
   componentDidMount() {
     this.getUserList();
   }
@@ -209,12 +209,18 @@ class List extends Component {
     return (
       <section className="user-table">
         <div className="user-search-wrapper">
-          <h2 style={{ marginBottom: '10px' }}>用户总数：{this.state.total}位</h2>
+          <h2 style={{ marginBottom: '10px' }}>
+            <div style={{ position: 'absolute', right: '270px' }}>
+              <AddUser onSuccess={() => this.getUserList()}/>
+            </div>
+            用户总数：{this.state.total}位
+          </h2>
           <Search
             onChange={e => this.handleSearch(e.target.value)}
             onSearch={this.handleSearch}
             placeholder="请输入用户名"
           />
+
         </div>
         <Table
           bordered={true}

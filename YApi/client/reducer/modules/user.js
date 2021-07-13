@@ -165,6 +165,19 @@ export function regActions(data) {
   };
 }
 
+export function regActionsAdmin(data) {
+  const { email, password, userName } = data;
+  const param = {
+    email,
+    password,
+    username: userName
+  };
+  return {
+    type: REGISTER,
+    payload: axios.post('/api/user/regAdmin', param)
+  };
+}
+
 export function logoutActions() {
   return {
     type: LOGIN_OUT,
