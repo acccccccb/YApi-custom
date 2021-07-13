@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://192.168.0.125",
+  "baseUrl": "http://192.168.0.126",
   "port": "3000",
   "adminAccount": "admin@admin.com",
   "timeout":120000,
@@ -15,7 +15,7 @@
     "authSource": ""
   },
   "mail": {
-    "enable": true,
+    "enable": false,
     "host": "smtp.163.com",
     "port": 465,
     "from": "***@163.com",
