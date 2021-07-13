@@ -47,3 +47,16 @@ npm run start
 - Error: listen EACCES: permission denied 0.0.0.0:80
 
 > 以root身份运行或将端口号改为1000以上
+
+#### 更新日志：
+
+1.9.4
+
+- 系统信息面板 新增开放注册状态、高级mock状态
+
+- 超管都可在用户管理处添加用户，不受开放注册状态限制
+
+1.9.3
+
+- Bug fix: 高级Mock提权（严重）
+
