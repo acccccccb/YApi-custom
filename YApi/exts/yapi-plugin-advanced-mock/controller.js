@@ -37,7 +37,9 @@ class advMockController extends baseController {
       if (!params.project_id) {
         return (ctx.body = yapi.commons.resReturn(null, 408, '缺少project_id'));
       }
-
+      if(!yapi.WEBCONFIG.mock && params.enable === true) {
+        return (ctx.body = yapi.commons.resReturn(null, 408, '已在配置文件关闭高级mock，无法开启'));
+      }
       let data = {
         interface_id: params.interface_id,
         mock_script: params.mock_script || '',
