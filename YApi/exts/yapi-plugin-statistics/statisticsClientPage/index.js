@@ -11,6 +11,32 @@ import { Row, Col, Tooltip, Icon } from 'antd';
 import { setBreadcrumb } from 'client/reducer/modules/user';
 import StatisChart from './StatisChart';
 import StatisTable from './StatisTable';
+const SystemSetting = props => (
+  <Row type="flex" justify="space-start" className="m-row">
+    <Col className="gutter-row" span={6}>
+      <span>
+        开放注册
+        <Tooltip placement="rightTop" title={'检测是否开放注册(closeRegister: ' + props.data.closeRegister + ')'}>
+          <Icon className="m-help" type="question-circle" />
+        </Tooltip>
+      </span>
+      <h2 className="gutter-box">{props.data.closeRegister ? '已禁止' : '已允许'}</h2>
+    </Col>
+    <Col className="gutter-row" span={6}>
+      <span>
+        高级mock
+        <Tooltip placement="rightTop" title={'检测是否允许高级mock(mock: '+ props.data.mock +')'}>
+          <Icon className="m-help" type="question-circle" />
+        </Tooltip>
+      </span>
+      <h2 className="gutter-box">{props.data.mock ? '已允许' : '已禁止'}</h2>
+    </Col>
+  </Row>
+);
+
+SystemSetting.propTypes = {
+  data: PropTypes.object
+};
 
 const CountOverview = props => (
   <Row type="flex" justify="space-start" className="m-row">
@@ -134,7 +160,8 @@ class statisticsPage extends Component {
         systemName: '',
         totalmem: '',
         freemem: '',
-        uptime: ''
+        uptime: '',
+        closeRegister: ''
       },
       dataTotal: []
     };
@@ -191,6 +218,15 @@ class statisticsPage extends Component {
     return (
       <div className="g-statistic">
         <div className="content">
+          <h2 className="title">
+            系统设置
+            <Tooltip placement="rightTop" title="对应config.json中的设置项">
+              <Icon className="m-help" type="question-circle" />
+            </Tooltip>
+          </h2>
+          <div className="system-content">
+            <SystemSetting data={status} />
+          </div>
           <h2 className="title">系统状况</h2>
           <div className="system-content">
             <StatusOverview data={status} />

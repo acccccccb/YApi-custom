@@ -106,6 +106,8 @@ class statisMockController extends baseController {
         totalmem,
         freemem,
         uptime,
+        closeRegister: yapi.WEBCONFIG.closeRegister,
+        mock: yapi.WEBCONFIG.mock,
         load: load.toFixed(2)
       };
       return (ctx.body = yapi.commons.resReturn(data));
