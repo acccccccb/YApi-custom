@@ -1,5 +1,5 @@
 {
-  "baseUrl": "http://192.168.0.126",
+  "baseUrl": "http://127.0.0.1",
   "port": "3000",
   "adminAccount": "admin@admin.com",
   "timeout":120000,
@@ -8,8 +8,8 @@
   "filter": "process|exec|require|spawn",
   "db": {
     "servername": "127.0.0.1",
-    "DATABASE": "api",
-    "port": 27017,
+    "DATABASE": "yapi",
+    "port": 27018,
     "user": "user1",
     "pass": "123456",
     "authSource": ""
