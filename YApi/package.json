@@ -5,10 +5,10 @@
     "main": "server/app.js",
     "scripts": {
         "dev-copy-icon": "cp -r static/iconfont ./",
-        "dev-server": " nodemon server/app.js dev -L",
+        "dev-server": "cross-env nodemon server/app.js dev -L",
         "install-server:prod": "NODE_ENV=production node server/install.js",
         "install-server": " node server/install.js",
-        "dev-client": "npm run dev-copy-icon && ykit s -p 4000",
+        "dev-client": "cross-env npm run dev-copy-icon && ykit s -p 4000",
         "dev": "npm run dev-server & npm run dev-client",
         "start": "NODE_ENV=production node server/app.js",
         "test": "ava",
